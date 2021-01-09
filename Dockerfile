@@ -13,7 +13,8 @@ RUN apt-get install -y mc file tree neovim less silversearcher-ag
 ENV ROS_WS /opt/ros_ws
 WORKDIR $ROS_WS
 RUN mkdir -pv $ROS_WS/src
-RUN git clone -b $ROSDIST https://github.com/ros2/rclcpp $ROS_WS/src/rclcpp
+RUN git clone -b $ROSDIST --depth 1 \
+    https://github.com/ros2/rclcpp $ROS_WS/src/rclcpp 
 RUN /bin/bash -c "source /opt/ros/${ROSDIST}/setup.bash && rosdep install -y --from-paths src"
 
 ENV CC afl-clang 
