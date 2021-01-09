@@ -6,5 +6,5 @@ docker run \
   --volume="$XAUTHORITY:/root/.Xauthority:rw"   \
   --device=/dev/dri:/dev/dri \
   --privileged \
-  --mount type=bind,source=.,target=/opt/ros_ws/src/rclcpp_fuzz \
+  --mount type=bind,source=${PWD},target=/opt/ros_ws/src/rclcpp_fuzz \
   -it fuzz_rclcpp 
