@@ -24,7 +24,7 @@ find_package (example_interfaces REQUIRED)
 add_executable (server src/add_two_ints_server.cpp)
 ament_target_dependencies (server rclcpp example_interfaces)
 
-add_executable (client src/add_two_ints_client.cpp)
+add_executable (client src/fuzz_target.cpp)
 ament_target_dependencies (client rclcpp example_interfaces)
 
 install (TARGETS

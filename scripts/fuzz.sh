@@ -53,7 +53,7 @@ export VERBOSE=0
 
 EVENT_HANDLERS="--event-handlers console_direct+"
 if [ ${VERBOSE} -eq "0" ]; then
-  EVENT_HANDLERS=0;
+  EVENT_HANDLERS="";
 fi
 
 msg "source ${ROS_DIST}/setup.sh"
