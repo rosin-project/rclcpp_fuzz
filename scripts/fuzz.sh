@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo This scripts assumes that you have built everything, 
+echo and zeroed coverage indices.
+
 export ROS_DIST=/opt/ros/eloquent
 
 # ABSOLUTE path to the ROS_WS
@@ -17,14 +20,12 @@ export CXXFLAGS="-fprofile-arcs -ftest-coverage"
 export CMAKE_EXE_LINKER_FLAGS="-fprofile-arcs -ftest-coverage -g -O0"
 export CMAKE_BUILD_TYPE="Coverage"
 
-VERBOSE=1 colcon build
-
 echo source ${ROS_DIST}/setup.sh
 . ${ROS_DIST}/setup.sh
 echo source ${ROS_WS}/install/setup.sh
 . ${ROS_WS}/install/setup.sh
 
 # m - none supposedly also works
-afl-fuzz -m 1000 -i ${ROS_WS}/src/rclcpp_fuzz/fuzz/in \
+afl-fuzz -m none -i ${ROS_WS}/src/rclcpp_fuzz/fuzz/in/ \
     -o ${ROS_WS}/src/rclcpp_fuzz/fuzz/out/ -- \
     install/rclcpp_fuzz/lib/rclcpp_fuzz/client
