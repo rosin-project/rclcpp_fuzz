@@ -1,4 +1,5 @@
-Coverage*
+Coverage_Report*
 tags
 fuzz/out/
+fuzz/lcov/
 fuzz/graphs/

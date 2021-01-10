@@ -37,7 +37,7 @@ they can be seen more as instructions than automation.
 
   The results of afl-plot are found in `fuzz/graphs/` after a
   succesful run.  The results of lcov are found in
-  'fuzz/Coverage_Report/' after a succesful run.
+  'fuzz/lcov/' after a succesful run.
 
   To give `afl-fuzz` more time change the value of `DURATION` in the
   `fuzz.sh` script.

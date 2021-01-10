@@ -1,16 +1,15 @@
 #!/bin/sh
 
-# colors for more readability
-CYAN='\033[1;36m'
-WHITE='\033[1;37m'
-NC='\033[0m' # No Color
-
 export ROS_DIST=/opt/ros/eloquent
 
 # ABSOLUTE path to the ROS_WS
 export ROS_WS=/opt/ros_ws
 # Name of the package we are interested in
 
+# colors for more readability, ad
+CYAN='\033[1;36m'
+WHITE='\033[1;37m'
+NC='\033[0m' # No Color
 STEP=1
 
 msg () {
@@ -18,7 +17,23 @@ msg () {
   let "STEP += 1"
 }
 
-msg "Configuration requirements of afl-fuzz"
+#### CONFIGURATION OF THE SCRIPT
+
+LCOVDIR=build/
+msg "Will track coverage of all files in ${LCOVDIR}"
+
+# How long time we allow afl-fuzz to run
+# On AW's PC 30s is a minimum useful time to run, so some data emerges
+DURATION=30s
+msg "Fuzzing duration is set to ${DURATION}"
+
+# Path to where we place coverage reports (best visible on the host)
+# If visible on the host you can just view in browser
+REPORT=src/rclcpp_fuzz/fuzz/lcov/Coverage_Report
+msg "Coverage report will be placed in ${REPORT}"
+
+
+msg "Setting configuration requirements of afl-fuzz"
 echo core > /proc/sys/kernel/core_pattern
 cd /sys/devices/system/cpu
 echo performance | tee cpu*/cpufreq/scaling_governor
@@ -31,15 +46,6 @@ ln `which llvm-cov-4.0` ${ROS_WS}/gcov -sfv
 GCOVTOOL="--gcov-tool ${ROS_WS}/gcov"
 
 
-# CONFIGURATION OF THE SCRIPT
-LCOVDIR=build/
-# Path to where we place coverage reports (best visible on the host)
-# If visible on the host you can just view in browser
-REPORT=src/rclcpp_fuzz/fuzz/Coverage_Report
-# How long time we allow afl-fuzz to run
-# On AW's PC 30s is a minimum useful time to run, so some data emerges
-DURATION=30s
-msg "Fuzzing duration is set to ${DURATION}"
 
 
 export CC=afl-clang 
@@ -95,6 +101,7 @@ lcov ${GCOVTOOL} -c -i -d ${LCOVDIR} -o ${REPORT}.base
 
 
 msg "Starting the server"
+echo ros2 run rclcpp_fuzz server \> /dev/null \&
 ros2 run rclcpp_fuzz server > /dev/null &
 
 
