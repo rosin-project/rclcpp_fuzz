@@ -32,6 +32,10 @@ they can be seen more as instructions than automation.
   coverage report in the directory of this projec tree under fuzz/ (so
   you can access it conveniently from the host system)
 
+  The results of afl-plot are found in `fuzz/graphs/` after a
+  succesful run.  The results of lcov are found in
+  'fuzz/Coverage_Report/' after a succesful run.
+
 `scripts/lcov.sh` - A script that we can use to produce the coverage
   report for the built-in rclcpp tests. Run it inside the container by
   invoking `source src/rclcpp_fuzz/scripts/lcov.sh`

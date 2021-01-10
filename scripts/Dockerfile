@@ -5,7 +5,8 @@ ENV ROSDIST eloquent
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -y afl clang lcov afl-cov
+RUN apt-get update \
+    && apt-get install -y afl clang lcov afl-cov gnuplot
 
 # TODO remove
 RUN apt-get install -y mc file tree neovim less silversearcher-ag 

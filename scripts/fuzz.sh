@@ -14,7 +14,7 @@ export ROS_WS=/opt/ros_ws
 STEP=1
 
 msg () {
-  printf "\n * ${CYAN}[${STEP}]${WHITE} $1 ${NC}\n\n"
+  printf "\n${CYAN}[${STEP}]${WHITE} $1 ${NC}\n\n"
   let "STEP += 1"
 }
 
@@ -37,7 +37,8 @@ LCOVDIR=build/
 # If visible on the host you can just view in browser
 REPORT=src/rclcpp_fuzz/fuzz/Coverage_Report
 # How long time we allow afl-fuzz to run
-DURATION=10s
+# On AW's PC 30s is a minimum useful time to run, so some data emerges
+DURATION=30s
 msg "Fuzzing duration is set to ${DURATION}"
 
 
@@ -97,7 +98,7 @@ msg "Starting the server"
 ros2 run rclcpp_fuzz server > /dev/null &
 
 
-msg "Starting afl-fuzz for ${DURATION} time"
+msg "Starting afl-fuzz for the duration of ${DURATION}"
 # m - none (you can replace none with the memory size in megabytes)
 timeout ${DURATION} afl-fuzz -m none -t 2000 -i ${ROS_WS}/src/rclcpp_fuzz/fuzz/in/ \
     -o ${ROS_WS}/src/rclcpp_fuzz/fuzz/out/ -- \
@@ -127,4 +128,6 @@ msg "Generate HTML report"
 genhtml -o ${REPORT} ${REPORT}.info.cleaned
 
 
-
+msg "Generate plots to rclcpp_fuzz/fuzz/graphs (crashes if afl had not enough time)"
+mkdir -pv src/rclcpp_fuzz/fuzz/graphs
+afl-plot src/rclcpp_fuzz/fuzz/out/  src/rclcpp_fuzz/fuzz/graphs/
