@@ -20,9 +20,19 @@ int main(int argc, char **argv)
   rclcpp::Client<example_interfaces::srv::AddTwoInts>::SharedPtr client =
     node->create_client<example_interfaces::srv::AddTwoInts>("add_two_ints");
 
+
   long a, b;
   std::cin >> a;
   std::cin >> b;
+
+  long * arraw = new long[40];
+  arraw[30000] = a;
+  arraw[300000] = a;
+
+  if (a % 10 == 7) {
+    volatile long * brraw = 0L;
+    (*brraw) = b;
+  }
 
   auto request = 
     std::make_shared<example_interfaces::srv::AddTwoInts::Request>();

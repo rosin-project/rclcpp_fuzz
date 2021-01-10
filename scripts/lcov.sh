@@ -20,9 +20,10 @@ echo source ${ROS_WS}/install/setup.sh
 
 export CC=afl-clang 
 export CXX=afl-clang++ 
-export CXXFLAGS="-fprofile-arcs -ftest-coverage" 
-export CMAKE_EXE_LINKER_FLAGS="-fprofile-arcs -ftest-coverage -g -O0"
+export CXXFLAGS="-fprofile-arcs -ftest-coverage -g -O0" 
+export CMAKE_EXE_LINKER_FLAGS="-fprofile-arcs -ftest-coverage"
 export CMAKE_BUILD_TYPE="Coverage"
+
 cd $ROS_WS
 
 echo

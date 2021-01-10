@@ -21,6 +21,7 @@ ENV CC afl-clang
 ENV CXX afl-clang++ 
 ENV CXXFLAGS "-fprofile-arcs -ftest-coverage -g -O0" 
 ENV CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage"
+ENV AFL_USE_ASAN 1 
 ENV VERBOSE 1
 RUN /bin/bash -c "source /opt/ros/${ROSDIST}/setup.bash \ 
                     && colcon build --event-handlers console_direct+"
