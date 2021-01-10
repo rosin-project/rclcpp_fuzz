@@ -18,12 +18,12 @@ The idea is that you:
 The scripts are annotated, and it makes sense to read them.  In fact,
 they can be seen more as instructions than automation.
 
-`script/Dockerfile` - the image in which we are running this experiments.
+* `script/Dockerfile` - the image in which we are running this experiments.
   Build the container using `docker build -t fuzz_rclcpp .` when the
   current directory is scripts.  This is done outside the container,
   on the host system.
 
-`scripts/fuzz.sh` - A script that we can use to run the fuzzing of the
+* `scripts/fuzz.sh` - A script that we can use to run the fuzzing of the
   simple service client, with the rclcpp instrumented. Run it inside the
   container by invoking `source src/rclcpp_fuzz/scripts/fuzz.sh`. In
   the container we assume you are in the root of the work space,
@@ -39,11 +39,11 @@ they can be seen more as instructions than automation.
   To give `afl-fuzz` more time change the value of `DURATION` in the
   `fuzz.sh` script.
 
-`scripts/lcov.sh` - A script that we can use to produce the coverage
+* `scripts/lcov.sh` - A script that we can use to produce the coverage
   report for the built-in rclcpp tests. Run it inside the container by
   invoking `source src/rclcpp_fuzz/scripts/lcov.sh`
 
-`scripts/start.sh` - A script I use to start the docker image by
+* `scripts/start.sh` - A script I use to start the docker image by
   `source start.sh` it has several overkill options but it is useful to
   talk to ROS gui tools, if need be.  It is used on Ubuntu 20.04, so you
   may need to make your own for mac, etc.  The important thing is to
