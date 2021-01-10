@@ -35,7 +35,10 @@ lcov ${GCOVTOOL} -c -i -d ${LCOVDIR} -o ${REPNAME}.base
 
 echo
 echo 3. Run tests
-colcon test # --packages-select ${PKG}
+colcon test --event-handlers console_direct+ # --packages-select ${PKG}
+ros2 run rclcpp_fuzz server &
+echo 42 45 | ros2 run rclcpp_fuzz client
+pkill server
 
 echo
 echo 4. Capturing lcov counters and generating report
@@ -56,4 +59,6 @@ echo
 echo 7. Generate HTML report
 genhtml -o ${REPNAME} ${REPNAME}.info.cleaned
 
-
+echo
+echo 8. Remove the intermediate files
+rm -fv ${REPNAME}{.info.cleaned,.total,.base,.info}
