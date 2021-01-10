@@ -36,6 +36,9 @@ they can be seen more as instructions than automation.
   succesful run.  The results of lcov are found in
   'fuzz/Coverage_Report/' after a succesful run.
 
+  To give `afl-fuzz` more time change the value of `DURATION` in the
+  `fuzz.sh` script.
+
 `scripts/lcov.sh` - A script that we can use to produce the coverage
   report for the built-in rclcpp tests. Run it inside the container by
   invoking `source src/rclcpp_fuzz/scripts/lcov.sh`
@@ -49,6 +52,10 @@ they can be seen more as instructions than automation.
 
 ## Known problems
 
-Coverage files are created by the user root in the container. They are
-not readable for your usual user on the host system.  Use `sudo chown
--Rv yruser:yruser .` to regain access.
+- Coverage files are created by the user root in the container. They
+  are not readable for your usual user on the host system.  Use `sudo
+  chown -Rv youruser:youruser .` to regain access.
+
+- `Afl-plot` (the very last step of `fuzz.sh`) fails if `afl-fuzz` has
+  not produced any results.  This happens if `DURATION` in `fuzz.sh`
+  is set too short.
