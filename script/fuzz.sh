@@ -24,7 +24,8 @@ msg "Will track coverage of all files in ${LCOVDIR}"
 
 # How long time we allow afl-fuzz to run
 # On AW's PC 30s is a minimum useful time to run, so some data emerges
-DURATION=30s
+# Paco: we need a bit more to get some meaningful results
+DURATION=600s
 msg "Fuzzing duration is set to ${DURATION}"
 
 # Path to where we place coverage reports (best visible on the host)
