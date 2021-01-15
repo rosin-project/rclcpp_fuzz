@@ -104,6 +104,7 @@ lcov ${GCOVTOOL} -c -i -d ${LCOVDIR} -o ${REPORT}.base
 msg "Starting the server"
 echo ros2 run rclcpp_fuzz server \> /dev/null \&
 ros2 run rclcpp_fuzz server > /dev/null &
+ros2 run rclcpp_fuzz listener > /dev/null &
 
 
 msg "Starting afl-fuzz for the duration of ${DURATION}"
@@ -113,8 +114,9 @@ timeout ${DURATION} afl-fuzz -m none -t 2000 -i ${ROS_WS}/src/rclcpp_fuzz/fuzz/i
     install/rclcpp_fuzz/lib/rclcpp_fuzz/client
 
 
-msg "Killing the server (the client and afl-fuzz should already be dead)"
+msg "Killing the servers (the client and afl-fuzz should already be dead)"
 pkill -e server
+pkill -e listener
 
 
 msg "Capturing lcov counters and generating report"
