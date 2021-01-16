@@ -19,24 +19,25 @@ using namespace std::chrono_literals;
 
 bool getFloat64 (double& d) 
 {
-    char bytes[8];
+    char * bytes = (char *) &d;
 
     for (size_t i = 0; i < sizeof (double); ++i) {
-        bytes[i] = getchar ();
-        if (bytes[i] == EOF) 
-          return false;
+        int c = getchar ();
+        if (c == EOF) return false;
+        bytes[i] =  (char) c;
     }
 
-    std::copy (bytes, bytes + sizeof (double), reinterpret_cast<char*> (&d));
     return true;
 }
 
 
 bool getInt8 (int8_t& out) 
 {
-  out = getchar ();
-  return (out != EOF);
+  int c = getchar ();
+  out = c;
+  return (c != EOF);
 }
+
 
 bool getUInt8 (uint8_t& out) 
 {
@@ -46,20 +47,17 @@ bool getUInt8 (uint8_t& out)
 
 bool getInt64(int64_t& out) 
 {
-    int bytes[8];
+    char * bytes = (char *) &out;
 
-    for (size_t i = 0; i < 8; ++i) {
-        bytes[i] = getchar ();
-        if (bytes[i] == EOF)
-            return false;
+    for (size_t i = 0; i < sizeof (int64_t); ++i) {
+      int c = getchar ();
+      if (c == EOF) return false;
+      bytes[i] = (char) c;
     }
-
-    out = 0;
-    for (size_t i = 0; i < 8; ++i)
-        out += (bytes[i] << (i*8));
 
     return true;
 }
+
 
 bool getBool (bool& b) 
 {
@@ -73,14 +71,13 @@ bool getBool (bool& b)
 
 bool getString(std::string& s, uint8_t size) {
 
-    char c;
     s = "";
 
     for (size_t i = 0; i < size; ++i) {
-        c = getchar ();
+        int c = getchar ();
         if (c == EOF)
           return false;
-        s += c;
+        s += (char) c;
     }
 
     return true;
@@ -212,22 +209,25 @@ void fuzz_parameters () { std::shared_ptr<rclcpp::Node> node =
     auto result = f3.get();
 
     auto param = result.at(0);
-    volatile auto str1 = param.as_string ();
+    std::string str1 = param.as_string ();
     param.value_to_string ();
 
     param = result.at (1);
-    volatile auto i1 = param.as_int ();
+    int64_t i1 = param.as_int ();
     param.value_to_string ();
 
     param = result.at (2);
-    volatile auto j1 = param.as_bool ();
+    bool j1 = param.as_bool ();
     param.value_to_string ();
 
     param = result.at (3);
-    volatile auto d1 = param.as_double ();
+    double d1 = param.as_double ();
     param.value_to_string ();
 
-    assert (i+j+d == i1+j1+d1);
+    assert (str == str1);
+    assert (i == i1);
+    assert (j == j1);
+    assert ( d != d || d == d1);
   }
 
 }
@@ -244,13 +244,13 @@ void fuzz_local_parameters ()
     rclcpp::Node::make_shared ("fuzz_local_param_api");
 
   node->declare_parameter<std::string> ("string_parameter", "world");
-  node->declare_parameter<int> ("int_parameter", -1);
-  node->declare_parameter<long> ("bool_parameter", false);
+  node->declare_parameter<int64_t> ("int_parameter", -1);
+  node->declare_parameter<bool> ("bool_parameter", false);
   node->declare_parameter<double> ("double_parameter", 0.0);
 
   int64_t i;
   uint8_t size;
-  auto str = std::string ();
+  std::string str = "";
   bool j;
   double d;
 
@@ -272,23 +272,26 @@ void fuzz_local_parameters ()
     auto result = 
        node->get_parameters ( {"string_parameter", "int_parameter", "bool_parameter", "double_parameter"} );
 
-    auto param = result.at(0);
-    volatile auto str1 = param.as_string ();
+    auto param = result.at (0);
+    std::string str1 = param.as_string ();
     param.value_to_string ();
 
     param = result.at (1);
-    volatile auto i1 = param.as_int ();
+    int64_t i1 = param.as_int ();
     param.value_to_string ();
 
     param = result.at (2);
-    volatile auto j1 = param.as_bool ();
+    bool j1 = param.as_bool ();
     param.value_to_string ();
 
     param = result.at (3);
-    volatile auto d1 = param.as_double ();
+    double d1 = param.as_double ();
     param.value_to_string ();
 
-    assert (i+j+d == i1+j1+d1);
+    assert (str == str1);
+    assert (i == i1);
+    assert (j == j1);
+    assert ( d != d || d == d1);
   }
 
 }
