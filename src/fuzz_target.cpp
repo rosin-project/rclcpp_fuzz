@@ -224,7 +224,10 @@ void fuzz_parameters () { std::shared_ptr<rclcpp::Node> node =
     volatile auto d1 = param.as_double ();
     param.value_to_string ();
 
-    assert (i+j+d == i1+j1+d1);
+    assert (str == str1);
+    assert (i == i1);
+    assert (j == j1);
+    assert ( d != d || d == d1);
   }
 
 }
