@@ -142,8 +142,8 @@ class MinimalPublisher : public rclcpp::Node
 
       auto message = std_msgs::msg::String();
       message.data = content;
-      RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
-      publisher_->publish(message);
+      // RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
+      publisher_->publish (message);
     }
 
     rclcpp::TimerBase::SharedPtr timer_;
