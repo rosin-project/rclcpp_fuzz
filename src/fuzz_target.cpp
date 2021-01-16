@@ -71,12 +71,18 @@ bool getBool (bool& b)
     return true;
 }
 
-bool getString(std::string& s, int8_t size) {
-    std::string res(size, '\0' );
-    if (fread(&res[0], sizeof(char), size, stdin) != (size_t) size) {
-        return false;
+bool getString(std::string& s, uint8_t size) {
+
+    char c;
+    s = "";
+
+    for (size_t i = 0; i < size; ++i) {
+        c = getchar ();
+        if (c == EOF)
+          return false;
+        s += c;
     }
-    s = res;
+
     return true;
 }
 
@@ -244,7 +250,7 @@ void fuzz_local_parameters ()
 
   int64_t i;
   uint8_t size;
-  std::string str;
+  auto str = std::string ();
   bool j;
   double d;
 
