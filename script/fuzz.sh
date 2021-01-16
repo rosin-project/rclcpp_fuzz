@@ -25,8 +25,9 @@ msg "Will track coverage of all files in ${LCOVDIR}"
 # How long time we allow afl-fuzz to run
 # On AW's PC 30s is a minimum useful time to run, so some data emerges
 # Paco: we need a bit more to get some meaningful results
-DURATION=600s
-msg "Fuzzing duration is set to ${DURATION}"
+DURATION=100s
+HANG_DURATION=600+
+msg "Fuzzing duration is set to ${DURATION} and hang dtection to ${HANG_DURATION}ms"
 
 # Path to where we place coverage reports (best visible on the host)
 # If visible on the host you can just view in browser
@@ -84,6 +85,16 @@ colcon build ${EVENT_HANDLERS}
 msg "source ${ROS_WS}/install/setup.sh"
 . ${ROS_WS}/install/setup.sh
 
+msg "Killing stale processes that could be left after the previous session"
+pkill -e server
+pkill -e listener
+pkill -e afl-fuzz
+pkill -e client
+ros2 daemon stop
+ros2 daemon start
+ros2 daemon status
+ros2 node list
+# the above 4 calls should stabilize the node initialization time for afl
 
 msg "Removing stale fuzzing results (might not be desirable)"
 rm ${ROS_WS}/src/rclcpp_fuzz/fuzz/out/* -Rfv
@@ -104,17 +115,21 @@ lcov ${GCOVTOOL} -c -i -d ${LCOVDIR} -o ${REPORT}.base
 msg "Starting the server"
 echo ros2 run rclcpp_fuzz server \> /dev/null \&
 ros2 run rclcpp_fuzz server > /dev/null &
+echo ros2 run rclcpp_fuzz listener \> /dev/null \&
+ros2 run rclcpp_fuzz listener > /dev/null &
 
 
 msg "Starting afl-fuzz for the duration of ${DURATION}"
 # m - none (you can replace none with the memory size in megabytes)
-timeout ${DURATION} afl-fuzz -m none -t 2000 -i ${ROS_WS}/src/rclcpp_fuzz/fuzz/in/ \
+timeout ${DURATION} afl-fuzz -m none -t ${HANG_DURATION} -i ${ROS_WS}/src/rclcpp_fuzz/fuzz/in/ \
     -o ${ROS_WS}/src/rclcpp_fuzz/fuzz/out/ -- \
     install/rclcpp_fuzz/lib/rclcpp_fuzz/client
 
 
-msg "Killing the server (the client and afl-fuzz should already be dead)"
+msg "Killing the servers (the client and afl-fuzz should already be dead)"
 pkill -e server
+pkill -e listener
+ros2 daemon stop
 
 
 msg "Capturing lcov counters and generating report"
