@@ -161,14 +161,12 @@ void fuzz_subscriber() {
 
 
 
-/*! 
- * \brief Fuzz the parameter database facility (setting and getting) 
+/*!  
+ * \brief Fuzz the parameter database facility (setting and getting)  in a
+ * remote node.
  */
-
-void fuzz_parameters () 
-{ 
-  std::shared_ptr<rclcpp::Node> node = 
-    rclcpp::Node::make_shared ("fuzz_param_api");
+void fuzz_parameters () { std::shared_ptr<rclcpp::Node> node =
+  rclcpp::Node::make_shared ("fuzz_param_api");
 
   int64_t i;
   uint8_t size;
@@ -233,15 +231,75 @@ void fuzz_parameters ()
 }
 
 
+
+/*! 
+ * \brief Fuzz the parameter database facility in this node (setting and
+ * getting) 
+ */
+void fuzz_local_parameters () 
+{ 
+  std::shared_ptr<rclcpp::Node> node = 
+    rclcpp::Node::make_shared ("fuzz_local_param_api");
+
+  node->declare_parameter<std::string> ("string_parameter", "world");
+  node->declare_parameter<int> ("int_parameter", -1);
+  node->declare_parameter<long> ("bool_parameter", false);
+  node->declare_parameter<double> ("double_parameter", 0.0);
+
+  int64_t i;
+  uint8_t size;
+  std::string str;
+  bool j;
+  double d;
+
+  while (getInt64 (i) && getUInt8 (size) && getString (str, size) && getBool (j) && getFloat64 (d)) {
+
+    rclcpp::Parameter param_i ("int_parameter", i);
+    rclcpp::Parameter param_str ("string_parameter", str);
+    rclcpp::Parameter param_j ("bool_parameter", j);
+    rclcpp::Parameter param_d ("double_parameter", d);
+
+    node->set_parameter ( { param_i } );
+    node->set_parameter ( { param_str } );
+    node->set_parameter ( { param_j } );
+    node->set_parameter ( { param_d } );
+
+    node->set_parameters ( { param_i, param_str, param_j, param_d } );
+    node->set_parameters_atomically ( { param_i, param_str, param_j, param_d } );
+
+    auto result = 
+       node->get_parameters ( {"string_parameter", "int_parameter", "bool_parameter", "double_parameter"} );
+
+    auto param = result.at(0);
+    volatile auto str1 = param.as_string ();
+    param.value_to_string ();
+
+    param = result.at (1);
+    volatile auto i1 = param.as_int ();
+    param.value_to_string ();
+
+    param = result.at (2);
+    volatile auto j1 = param.as_bool ();
+    param.value_to_string ();
+
+    param = result.at (3);
+    volatile auto d1 = param.as_double ();
+    param.value_to_string ();
+
+    assert (i+j+d == i1+j1+d1);
+  }
+
+}
+
+
+
 int main (int argc, char **argv)
 {
-
+  uint8_t selector;
   rclcpp::init (argc, argv);
 
-  uint8_t selector;
-
   if (getUInt8 (selector))  {
-    switch (selector % 3) {
+    switch (selector % 4) {
 
       case 0: 
         fuzz_server ();
@@ -253,6 +311,9 @@ int main (int argc, char **argv)
 
       case 2:
         fuzz_parameters ();
+
+      case 3:
+        fuzz_local_parameters ();
     }
   }
   
