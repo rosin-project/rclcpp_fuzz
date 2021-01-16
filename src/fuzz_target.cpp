@@ -209,19 +209,19 @@ void fuzz_parameters () { std::shared_ptr<rclcpp::Node> node =
     auto result = f3.get();
 
     auto param = result.at(0);
-    volatile auto str1 = param.as_string ();
+    std::string str1 = param.as_string ();
     param.value_to_string ();
 
     param = result.at (1);
-    volatile auto i1 = param.as_int ();
+    int64_t i1 = param.as_int ();
     param.value_to_string ();
 
     param = result.at (2);
-    volatile auto j1 = param.as_bool ();
+    bool j1 = param.as_bool ();
     param.value_to_string ();
 
     param = result.at (3);
-    volatile auto d1 = param.as_double ();
+    double d1 = param.as_double ();
     param.value_to_string ();
 
     assert (str == str1);
