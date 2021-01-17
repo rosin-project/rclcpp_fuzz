@@ -1,4 +1,4 @@
-# RCLCPP fuzzing scratchpad
+# rclcpp_fuzz
 
 Infrastructure for reproducing fuzzing experiments with afl-clang++
 and ASAN on rclcpp eloquent for ROSIN Deliverable D3.7.
@@ -67,11 +67,6 @@ they can be seen more as instructions than automation.
   is set too short.
 
 ## Acknowledgements
-
-<!--
-    ROSIN acknowledgement from the ROSIN press kit
-    @ https://github.com/rosin-project/press_kit
--->
 
 <a href="http://rosin-project.eu">
   <img src="http://rosin-project.eu/wp-content/uploads/rosin_ack_logo_wide.png" alt="rosin_logo" height="60">
