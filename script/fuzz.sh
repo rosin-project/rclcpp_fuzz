@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Run this script in the root of the workspace 
+# source src/rclcpp_fuzz/scripts/fuzz.sh
+
 export ROS_DIST=/opt/ros/eloquent
 
 # ABSOLUTE path to the ROS_WS
@@ -19,14 +22,14 @@ msg () {
 
 #### CONFIGURATION OF THE SCRIPT
 
-LCOVDIR=build/
+export LCOVDIR=build/
 msg "Will track coverage of all files in ${LCOVDIR}"
 
 # How long time we allow afl-fuzz to run
 # On AW's PC 30s is a minimum useful time to run, so some data emerges
 # Paco: we need a bit more to get some meaningful results
-DURATION=7200s
-HANG_DURATION=1500+
+DURATION=100s
+HANG_DURATION=1000+
 msg "Fuzzing duration is set to ${DURATION} and hang dtection to ${HANG_DURATION}ms"
 
 # Path to where we place coverage reports (best visible on the host)
@@ -52,7 +55,7 @@ GCOVTOOL="--gcov-tool ${ROS_WS}/gcov"
 
 export CC=afl-clang 
 export CXX=afl-clang++ 
-export CXXFLAGS="-fprofile-arcs -ftest-coverage -g -O0" 
+export CXXFLAGS="-fprofile-arcs -ftest-coverage -g -O3" 
 export CMAKE_EXE_LINKER_FLAGS="-fprofile-arcs -ftest-coverage"
 export CMAKE_BUILD_TYPE="Coverage"
 export AFL_USE_ASAN=1
@@ -127,9 +130,11 @@ timeout ${DURATION} afl-fuzz -m none -t ${HANG_DURATION} -i ${ROS_WS}/src/rclcpp
 
 
 msg "Killing the servers (the client and afl-fuzz should already be dead)"
-pkill -e server
-pkill -e listener
 ros2 daemon stop
+pkill -SIGINT -e server
+pkill -SIGINT -e listener
+sleep 0.1
+
 
 
 msg "Capturing lcov counters and generating report"
