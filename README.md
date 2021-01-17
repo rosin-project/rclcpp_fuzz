@@ -1,17 +1,20 @@
 # RCLCPP fuzzing scratchpad
 
-Infrastructure that Andrzej is collecting that he uses in fuzzing
-experiments with ROS2.
+Infrastructure for reproducing fuzzing experiments with afl-clang++
+and ASAN on rclcpp eloquent for ROSIN Deliverable D3.7.
 
-The idea is that you:
-
-1. clone this repo on the host system.
-2. Build the docker using the provided dockerfile (below).
-3. Start the docker container using `docker run` (see `script.sh`)
-   below. It is important that the cloned source tree of this project
-   is mounted in the work space as src/rclcpp_fuzz
-4. Use the fuzz.sh or the lcov.sh script (below) to fuzz or test
-   rclcpp
+1. Clone this repo on the host system.
+2. Build the docker using the provided `script/Dockerfile`
+  ```bash
+  docker build -t fuzz_rclcpp .
+  ```
+3. Start the docker container using `docker run` (You can source
+   `script/start.sh` from the root of the cloned git repository) It
+   is important that the cloned source tree of this project is mounted
+   in the work space as src/rclcpp_fuzz
+4. In the container source `script/fuzz.sh` from the mount
+   repository. The `script/lcov.sh` script can be used to compute
+   coverage of built in tests.
 
 ## Key Files
 
@@ -62,3 +65,24 @@ they can be seen more as instructions than automation.
 - `Afl-plot` (the very last step of `fuzz.sh`) fails if `afl-fuzz` has
   not produced any results.  This happens if `DURATION` in `fuzz.sh`
   is set too short.
+
+## Acknowledgements
+
+<!--
+    ROSIN acknowledgement from the ROSIN press kit
+    @ https://github.com/rosin-project/press_kit
+-->
+
+<a href="http://rosin-project.eu">
+  <img src="http://rosin-project.eu/wp-content/uploads/rosin_ack_logo_wide.png" alt="rosin_logo" height="60">
+</a>
+
+Supported by ROSIN - ROS-Industrial Quality-Assured Robot Software
+Components.  More information:
+<a href="http://rosin-project.eu">rosin-project.eu</a>
+
+<img src="http://rosin-project.eu/wp-content/uploads/rosin_eu_flag.jpg" alt="eu_flag" height="45" align="left" >
+
+This project has received funding from the European Union’s Horizon
+2020 research and innovation programme under grant agreement no.
+732287.
