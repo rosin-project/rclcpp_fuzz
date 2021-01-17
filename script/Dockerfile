@@ -8,9 +8,6 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update \
     && apt-get install -y afl clang lcov afl-cov gnuplot
 
-# TODO remove
-RUN apt-get install -y mc file tree neovim less silversearcher-ag 
-
 ENV ROS_WS /opt/ros_ws
 WORKDIR $ROS_WS
 RUN mkdir -pv $ROS_WS/src
